@@ -83,7 +83,7 @@ const Navbar = () => {
                      setShowUserLogin(true);
                 }} className="cursor-pointer px-6 py-2 mt-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dull)] transition text-[var(--color-primary-white)] rounded-full text-sm">
                     Login
-                </button>) : (<button onClick={ setShowUserLogin(true)} className="cursor-pointer px-6 py-2 mt-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dull)] transition text-[var(--color-primary-white)] rounded-full text-sm">
+                </button>) : (<button onClick={()=> setShowUserLogin(true)} className="cursor-pointer px-6 py-2 mt-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dull)] transition text-[var(--color-primary-white)] rounded-full text-sm">
                     Logout
                 </button>) }
                 
