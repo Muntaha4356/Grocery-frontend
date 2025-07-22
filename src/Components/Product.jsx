@@ -1,13 +1,17 @@
 import React, { useEffect } from "react";
 import { useAppContext } from "../Context/AppContext";
 import { assets } from "../assets/greencart_assets/assets";
+import { useNavigate } from "react-router-dom";
 const Product = ({product}) => {
+    const navigate= useNavigate();
     const [count, setCount] = React.useState(0);
     const {AddtoCart, cartItems ,updateCartItem, removeCartItem} = useAppContext();
   
-    
+    const ProductClickHandle = () => {
+        navigate(`/products/${product.category}/${product._id}`)
+    }
     return product && (
-        <div className="border border-gray-500/20 rounded-md md:px-4 px-3 py-2 bg-white min-w-56 max-w-56 w-full">
+        <div onClick={ProductClickHandle} className="border border-gray-500/20 rounded-md md:px-4 px-3 py-2 bg-white min-w-56 max-w-56 w-full">
             <div className="group cursor-pointer flex items-center justify-center px-2">
                 <img className="group-hover:scale-105 transition max-w-26 md:max-w-36" 
                 src={product.image[0]} alt={product.name} />
