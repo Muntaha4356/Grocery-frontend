@@ -14,6 +14,7 @@ export const AppContextProvider = ({children}) => {
     const [product, setProduct] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState({});
+    const [cartCount, setCartCount]=useState(0);
     
     const fetchProducts =async () =>{
         const fetchedProduct= dummyProducts;
@@ -23,6 +24,7 @@ export const AppContextProvider = ({children}) => {
 
     const AddtoCart = (itemId) =>{
         let cartData = structuredClone(cartItems);
+
         
         if(cartData[itemId]){
             cartData[itemId] += 1;
@@ -30,6 +32,7 @@ export const AppContextProvider = ({children}) => {
             cartData[itemId] = 1;
         }
         setCartItems(cartData);
+        console.log(cartItems)
         toast.success("Added to cart");
 
         
@@ -61,8 +64,40 @@ export const AppContextProvider = ({children}) => {
         fetchProducts();
     }, [])
 
+    //get total item in cart for cart symbolin the navbar
+    const getCartCount=()=>{
+        let totalCount = 0;
+        for(const item in cartItems){
+            totalCount+=cartItems[item];
+        }
+        return totalCount;
+    }
 
-    const value= {navigate,user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, product,cartItems, AddtoCart, updateCartItem, removeCartItem, searchQuery, setSearchQuery}
+    //get Cart total amount (as money)
+    const getCartTotalAmount =() => {
+        let totalAmount = 0;
+        for(const item in cartItems ){
+            let itemInfo = product.find((pr)=> pr._id ===item)
+            if(cartItems[item] > 0){
+                totalAmount += itemInfo.offerPrice * cartItems[item]
+            }
+        }
+        return Math.floor(totalAmount * 100)/100;
+    }
+
+    const getItemCount = (itemId) => {
+        let totalCount = 0;
+        return cartItems[itemId]
+
+    }
+
+
+
+
+
+    const value= {navigate,user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, 
+        product,cartItems, AddtoCart, updateCartItem, removeCartItem, searchQuery,
+         setSearchQuery,getCartCount, getCartTotalAmount,getItemCount}
 
     return <AppContext.Provider value={value}>
         {children}

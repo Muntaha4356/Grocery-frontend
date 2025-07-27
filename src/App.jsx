@@ -9,13 +9,21 @@ import { useAppContext } from "./Context/AppContext";
 import AllProducts from "./Pages/AllProducts";
 import ProductCategoryPage from "./Pages/ProductCategoryPage";
 import ProductPageDesign from "./Pages/ProductPageDesign";
+import CartPage from "./Pages/CartPage";
+import AddAdress from "./Pages/AddAdress";
+import MyOrders from "./Pages/MyOrders";
+import Seller from "./Components/Seller/Seller";
+import SellerLayout from "./Pages/Seller/SellerLayout";
+import Addproduct from "./Pages/Seller/Addproduct";
+import ProductList from "./Pages/Seller/ProductList";
+import Orders from "./Pages/Seller/Orders";
 function App() {
   
   const isSellerPath = useLocation().pathname.includes("seller");
-  const { showUserLogin, setShowUserLogin } = useAppContext();
+  const { showUserLogin, setShowUserLogin,isSeller,setIsSeller } = useAppContext();
   console.log(showUserLogin)
   return (
-    <>
+    <div className="text-default min-h-screen text-gray-700 bg-white">
     {/* This line checks if the current URL path contains the word "seller", and stores the result (a boolean) in the variable isSellerPath. */}
       {isSellerPath ? null : <Navbar/> }
       {showUserLogin ? <Login/> : null}
@@ -27,12 +35,20 @@ function App() {
               <Route path="/products" element={<AllProducts /> } />
               <Route path="/products/:category" element={<ProductCategoryPage/>} />
               <Route path="/products/:category/:id" element={<ProductPageDesign />} />
+              <Route path="/cart" element={<CartPage/> } />
+              <Route path="/add-address" element={<AddAdress/> }/>
+              <Route path="/orders" element={<MyOrders/> }/>
+              <Route path="/seller" element={ isSeller ? <SellerLayout/> : <Seller/>} >
+                <Route index element={isSeller? <Addproduct/> : null} />
+                <Route path="product-list" element={<ProductList/>} />
+                <Route path="orders" element={<Orders/>} />
+              </Route>
               {/* Add more routes here */}
             </Routes>
           </div>
         )}
       <Footer/>
-    </>
+    </div>
   )
 }
 

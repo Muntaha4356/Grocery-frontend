@@ -16,3 +16,8 @@
   --color-primary-white: #F5F4ED;
 }
 
+/* no-scrollbar */
+.no-scrollbar::-webkit-scrollbar{
+  display: none;
+}
+

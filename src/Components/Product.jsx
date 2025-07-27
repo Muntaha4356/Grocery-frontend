@@ -8,7 +8,8 @@ const Product = ({product}) => {
     const {AddtoCart, cartItems ,updateCartItem, removeCartItem} = useAppContext();
   
     const ProductClickHandle = () => {
-        navigate(`/products/${product.category}/${product._id}`)
+        navigate(`/products/${product.category}/${product._id}`);
+        scrollTo(0,0)
     }
     return product && (
         <div onClick={ProductClickHandle} className="border border-gray-500/20 rounded-md md:px-4 px-3 py-2 bg-white min-w-56 max-w-56 w-full">
