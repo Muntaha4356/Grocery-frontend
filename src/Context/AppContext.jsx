@@ -2,6 +2,16 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { assets, dummyProducts } from "../assets/greencart_assets/assets";
 import toast from "react-hot-toast";
+import axios from "axios"
+
+
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
+
+
+
+
 export const AppContext = createContext();
 
 
@@ -10,7 +20,7 @@ export const AppContextProvider = ({children}) => {
     const navigate = useNavigate()
     const [user, setUser] =useState("jj");
     const [isSeller, setIsSeller] = useState(false);
-    const [showUserLogin, setShowUserLogin] = useState(false);
+    const [showUserLogin, setShowUserLogin] = useState();
     const [product, setProduct] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState({});
@@ -20,6 +30,22 @@ export const AppContextProvider = ({children}) => {
         const fetchedProduct= dummyProducts;
         await setProduct(fetchedProduct);
         
+
+    }
+    const checkSellerAuth = async () =>{
+        try {
+            const {data} = await axios.get("/api/seller/is-auth");
+            if(data.success){
+                setIsSeller(true);
+            }
+            else {
+                console.log("weew")
+                setIsSeller(false);
+            }
+        } catch (error) {
+            toast.error("Error verifying seller",  error);
+            setIsSeller(false);
+        }
     }
 
     const AddtoCart = (itemId) =>{
@@ -61,6 +87,7 @@ export const AppContextProvider = ({children}) => {
         setCartItems(cartData);
     }
     useEffect(()=>{
+        checkSellerAuth();
         fetchProducts();
     }, [])
 
@@ -92,12 +119,18 @@ export const AppContextProvider = ({children}) => {
     }
 
 
+    
+
+
+    
+
+
 
 
 
     const value= {navigate,user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, 
         product,cartItems, AddtoCart, updateCartItem, removeCartItem, searchQuery,
-         setSearchQuery,getCartCount, getCartTotalAmount,getItemCount}
+        setSearchQuery,getCartCount, getCartTotalAmount,getItemCount, axios, checkSellerAuth}
 
     return <AppContext.Provider value={value}>
         {children}

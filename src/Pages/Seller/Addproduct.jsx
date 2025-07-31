@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { assets, categories } from '../../assets/greencart_assets/assets';
-
+import toast from 'react-hot-toast';
+import { useAppContext } from '../../Context/AppContext';
 
 
 const Addproduct = () => {
@@ -11,10 +12,58 @@ const Addproduct = () => {
     const [category, setCategory] = useState(``);
     const [price, setPrice] = useState(``);
     const [offerPrice, setOfferPrice] = useState(``);
+    const {axios} = useAppContext()
 
 
     const onSubmitHandler = async (e) =>{
         e.preventDefault();
+        if (files.length === 0 || files.every(f => !f)) {
+            return toast.error("Please upload at least one product image");
+        }
+        const productData = {
+            name,
+            description: description.split('\n'),
+            category,
+            price,
+            offerPrice,
+        };
+        const formData = new FormData();
+        files.forEach((file) => {
+        if (file) {
+            formData.append("images", file);
+        }
+        });
+
+        formData.append("poductData", JSON.stringify(productData));
+
+        try {
+        const res = await axios.post(
+        "/api/product/add-product",
+        formData,
+        {
+            headers: {
+            "Content-Type": "multipart/form-data",
+            },
+            withCredentials: true, // Important if using cookies/auth
+        }
+        );
+        if (res.data.success) {
+            toast.success("Product added successfully!");
+            // Reset form
+            setFiles([]);
+            setName("");
+            setDescription("");
+            setCategory("");
+            setPrice("");
+            setOfferPrice("");
+            } else {
+                console.log(res.data.message)
+            toast.error(res.data.message || "Something went wrong");
+        }
+        } catch (err) {
+            console.error(err);
+            toast.error("Upload failed. Try again.");
+        }
     }
 
 
@@ -67,12 +116,12 @@ const Addproduct = () => {
                 <div className="flex items-center gap-5 flex-wrap">
                     <div className="flex-1 flex flex-col gap-1 w-32">
                         <label className="text-base font-medium" htmlFor="product-price">Product Price</label>
-                        <input onChange={(e)=>setPrice(e.target.value)} value={price}
+                        <input onChange={(e)=>setPrice(Number(e.target.value))} value={price}
                         id="product-price" type="number" placeholder="0" className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40" required />
                     </div>
                     <div className="flex-1 flex flex-col gap-1 w-32">
                         <label className="text-base font-medium" htmlFor="offer-price">Offer Price</label>
-                        <input onChange={(e)=>setOfferPrice(e.target.value())} value={offerPrice}
+                        <input onChange={(e)=>setOfferPrice(Number(e.target.value))} value={offerPrice}
                         id="offer-price" type="number" placeholder="0" className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40" required />
                     </div>
                 </div>

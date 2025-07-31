@@ -1,10 +1,12 @@
 import React from 'react'
 import { useAppContext } from '../../Context/AppContext';
 import { assets } from '../../assets/greencart_assets/assets';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 //navigation bar and sidebar
 const SellerLayout = () => {
-    const {isSeller, setIsSeller} =useAppContext();
+    const navigate = useNavigate();
+    const {isSeller, setIsSeller, axios} =useAppContext();
     //adding icon images
     
 
@@ -19,7 +21,16 @@ const SellerLayout = () => {
     ];
 
     const logout =async()=>{
-        setIsSeller(false);
+
+        try {
+            await axios.post("/api/seller/logout");
+            setIsSeller(false);
+            toast.success("Seller logged out");
+            navigate("/"); // redirect if needed
+        } catch (error) {
+            console.error("Logout failed:", error);
+            toast.error("Logout failed");
+        }
     }
 
     return (

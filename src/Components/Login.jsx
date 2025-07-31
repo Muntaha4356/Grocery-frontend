@@ -1,6 +1,7 @@
 import React from 'react'
 import { useAppContext } from '../Context/AppContext';
 const Login = () => {
+    
     const [state, setState] = React.useState("login");
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
@@ -16,6 +17,8 @@ const Login = () => {
         })
         setShowUserLogin(false)
     }
+
+    
 
     return (
         <div  onClick={() =>setShowUserLogin(false)} className="fixed inset-0 flex justify-center items-center bg-black/20 z-50">

@@ -17,14 +17,20 @@ import SellerLayout from "./Pages/Seller/SellerLayout";
 import Addproduct from "./Pages/Seller/Addproduct";
 import ProductList from "./Pages/Seller/ProductList";
 import Orders from "./Pages/Seller/Orders";
+import { useEffect } from "react";
 function App() {
   
   const isSellerPath = useLocation().pathname.includes("seller");
-  const { showUserLogin, setShowUserLogin,isSeller,setIsSeller } = useAppContext();
+  const { showUserLogin, setShowUserLogin,isSeller,setIsSeller, checkSellerAuth } = useAppContext();
   console.log(showUserLogin)
+
+
+
+  
   return (
     <div className="text-default min-h-screen text-gray-700 bg-white">
     {/* This line checks if the current URL path contains the word "seller", and stores the result (a boolean) in the variable isSellerPath. */}
+    
       {isSellerPath ? null : <Navbar/> }
       {showUserLogin ? <Login/> : null}
       <Toaster/>
