@@ -1,21 +1,41 @@
 import React from 'react'
 import { useAppContext } from '../Context/AppContext';
+import toast from "react-hot-toast";
+import { useNavigate } from 'react-router-dom';
+
+
 const Login = () => {
     
     const [state, setState] = React.useState("login");
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const { showUserLogin, setShowUserLogin, setUser } = useAppContext();
+    const { showUserLogin, setShowUserLogin, setUser, axios} = useAppContext();
+    const navigate = useNavigate();
+
 
     const onSubmitHandler = async(e) => {
         e.preventDefault();
-        setUser({
-            email:"currentPerson",
-            name:"muntaha",
-            
+        try{
+        const {data} = await axios.post(state ==='login' ? '/api/user/login' : '/api/user/register', {
+            email, password, 
+            ...(state === "register" && { name })
+
         })
-        setShowUserLogin(false)
+        if(data.success){
+            setUser(data.user);
+            setShowUserLogin(false);
+            console.log("Login/Register success:", data);
+            toast.success("Welcome!");
+            navigate('/');
+
+        }else{
+            console.log("Failed:", data.message);
+            toast.error(data.message);
+        }
+        }catch (error) {
+            console.error("Error in login/register:", error);
+        }
     }
 
     

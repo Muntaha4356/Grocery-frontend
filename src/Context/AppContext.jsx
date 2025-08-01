@@ -25,6 +25,25 @@ export const AppContextProvider = ({children}) => {
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState({});
     const [cartCount, setCartCount]=useState(0);
+
+
+    //Fetch User authentication
+    const fetchUserStatus = async() => {
+        try {
+            const {data} = await axios.get('/api/user/isAuth');
+            if(data.success){
+                console.log(data);
+            }else{
+                console.log("hhh");
+                setUser(data.user)
+                setCartItems(data.user.cartItems);
+            }
+        } catch (error) {
+            setUser(null)
+            console.log(error)
+        }
+    }
+
     
     const fetchProducts =async () =>{
         try {
@@ -98,16 +117,38 @@ export const AppContextProvider = ({children}) => {
     useEffect(()=>{
         checkSellerAuth();
         fetchProducts();
+        fetchUserStatus();
     }, [])
+//update hecartitem in the database
+    useEffect(() => {
+        const updateCart = async () => {
+            try {
+                const {data} = await axios.post('/api/cart/update', {
+                    cartItems
+                })
+                if(!data.success){
+                    toast.error(data.message)
+                }
+            } catch (error) {
+                toast.error(error.message)
+            }
+        }
+        if(user){
+            updateCart();
+        }
+    }, [cartItems])
+
+
+    // Update count when cartItems change
+    useEffect(() => {
+        const totalCount = Object.values(cartItems).reduce((acc, val) => acc + val, 0);
+        setCartCount(totalCount);
+    }, [cartItems]);
+
 
     //get total item in cart for cart symbolin the navbar
-    const getCartCount=()=>{
-        let totalCount = 0;
-        for(const item in cartItems){
-            totalCount+=cartItems[item];
-        }
-        return totalCount;
-    }
+    const getCartCount = () => cartCount;
+
 
     //get Cart total amount (as money)
     const getCartTotalAmount =() => {
@@ -122,7 +163,6 @@ export const AppContextProvider = ({children}) => {
     }
 
     const getItemCount = (itemId) => {
-        let totalCount = 0;
         return cartItems[itemId]
 
     }

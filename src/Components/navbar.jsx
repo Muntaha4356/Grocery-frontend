@@ -2,13 +2,26 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../Context/AppContext';
+import toast from 'react-hot-toast';
 const Navbar = () => {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const {user, setUser,getCartCount} = useAppContext();
-    const {setShowUserLogin, setSearchQuery, searchQuery} = useAppContext();
+    const {setShowUserLogin, setSearchQuery, searchQuery, axios} = useAppContext();
 
     const logout = async() => {
+        try {
+            const {data} = await axios.get('api/user/logout')
+            if(data.success){
+                toast.success("Logged Out")
+                setUser(null)
+                navigate('/')
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
         setUser(null);
         navigate("/");
     }
@@ -105,18 +118,18 @@ const Navbar = () => {
                      setShowUserLogin(true);
                 }} className="cursor-pointer px-6 py-2 mt-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dull)] transition text-[var(--color-primary-white)] rounded-full text-sm">
                     Login
-                </button>) : (<button onClick={()=> setShowUserLogin(true)} className="cursor-pointer px-6 py-2 mt-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dull)] transition text-[var(--color-primary-white)] rounded-full text-sm">
+                </button>) : (<button onClick={() => {
+                    setOpen(false);
+                    logout(); 
+                    }} className="cursor-pointer px-6 py-2 mt-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dull)] transition text-[var(--color-primary-white)] rounded-full text-sm">
                     Logout
                 </button>) }
                 
             </div>
-</div>
+        </div>
 
 
-        </nav>
-        
-
-        
+        </nav>    
     </>
   )
 }
