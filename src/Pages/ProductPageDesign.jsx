@@ -25,7 +25,6 @@ const ProductPageDesign = () => {
             (item) => item.category === currentProduct.category && item._id !== currentProduct._id
           );
           setRelatedProduct(related);
-          console.log(related);
         }
     }, [currentProduct, product]);
 

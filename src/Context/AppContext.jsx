@@ -25,6 +25,8 @@ export const AppContextProvider = ({children}) => {
     const [cartItems, setCartItems] = useState({});
     const [searchQuery, setSearchQuery] = useState({});
     const [cartCount, setCartCount]=useState(0);
+    const [cartUpdated, setCartUpdated] = useState(false);
+
 
 
     //Fetch User authentication
@@ -88,6 +90,7 @@ export const AppContextProvider = ({children}) => {
         setCartItems(cartData);
         console.log(cartItems)
         toast.success("Added to cart");
+        setCartUpdated(true);
 
         
     }
@@ -99,6 +102,7 @@ export const AppContextProvider = ({children}) => {
         cartData[itemId] = quantity;
         setCartItems(cartData);
         toast.success("Cart Updated");
+        setCartUpdated(true);
     }
 
     //remove product entirely 
@@ -113,6 +117,7 @@ export const AppContextProvider = ({children}) => {
         }
         toast.success("Removed the Item from the Cart");
         setCartItems(cartData);
+        setCartUpdated(true);
     }
     useEffect(()=>{
         checkSellerAuth();
@@ -129,26 +134,30 @@ export const AppContextProvider = ({children}) => {
                 if(!data.success){
                     toast.error(data.message)
                 }
+                setCartItems(data.cart)
             } catch (error) {
                 toast.error(error.message)
+            }finally {
+                setCartUpdated(false); // reset flag
             }
         }
         if(user){
             updateCart();
         }
-    }, [cartItems])
+    }, [cartUpdated])
 
 
     // Update count when cartItems change
-    useEffect(() => {
-        const totalCount = Object.values(cartItems).reduce((acc, val) => acc + val, 0);
-        setCartCount(totalCount);
-    }, [cartItems]);
 
 
     //get total item in cart for cart symbolin the navbar
-    const getCartCount = () => cartCount;
-
+    const getCartCount=()=>{
+        let totalCount = 0;
+        for(const item in cartItems){
+            totalCount+=cartItems[item];
+        }
+        return totalCount;
+    }
 
     //get Cart total amount (as money)
     const getCartTotalAmount =() => {
@@ -178,7 +187,7 @@ export const AppContextProvider = ({children}) => {
 
 
     const value= {navigate,user, setUser, isSeller, setIsSeller, showUserLogin, setShowUserLogin, 
-        product,cartItems, AddtoCart, updateCartItem, removeCartItem, searchQuery,
+        product,cartItems, setCartItems ,AddtoCart, updateCartItem, removeCartItem, searchQuery,
         setSearchQuery,getCartCount, getCartTotalAmount,getItemCount, axios, checkSellerAuth, fetchProducts}
 
     return <AppContext.Provider value={value}>

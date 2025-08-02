@@ -18,6 +18,7 @@ import Addproduct from "./Pages/Seller/Addproduct";
 import ProductList from "./Pages/Seller/ProductList";
 import Orders from "./Pages/Seller/Orders";
 import { useEffect } from "react";
+import Loading from "./Components/Loading";
 function App() {
   
   const isSellerPath = useLocation().pathname.includes("seller");
@@ -43,7 +44,9 @@ function App() {
               <Route path="/products/:category/:id" element={<ProductPageDesign />} />
               <Route path="/cart" element={<CartPage/> } />
               <Route path="/add-address" element={<AddAdress/> }/>
-              <Route path="/orders" element={<MyOrders/> }/>
+              <Route path="/myorders" element={<MyOrders/> }/>
+              <Route path="/loader" element={<Loading/> }/>
+
               <Route path="/seller" element={ isSeller ? <SellerLayout/> : <Seller/>} >
                 <Route index element={isSeller? <Addproduct/> : null} />
                 <Route path="product-list" element={<ProductList/>} />

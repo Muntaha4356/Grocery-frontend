@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import { assets, dummyOrders } from '../../assets/greencart_assets/assets';
+import { useAppContext } from '../../Context/AppContext';
 
 const Orders = () => {
   const boxIcon = "https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/e-commerce/boxIcon.svg"
     const [orders, setOrders] = useState([]);
 
+    const {axios, user} = useAppContext()
 
     const fetchOrders = async () =>{
-      setOrders(dummyOrders);
+      try {
+        const {data} = await axios.get('/api/order/seller')
+        if(data.success){
+          setOrders(data.orders)
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
 
     useEffect(()=>{
-      fetchOrders()
-    }, [])
+      if(user){
+        fetchOrders()
+      }
+      
+    }, [user])
     
     return (
       <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll">
